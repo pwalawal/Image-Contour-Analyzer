@@ -126,12 +126,10 @@ def test_set_generater(sample1):
 
 """generate training_set"""
 # import images and preprocess
-sample1 = cv2.imread("/Users/Pratik/Downloads/EEL 6562 Project/plane1.tiff", 0)
-sample2 = cv2.imread("/Users/Pratik/Downloads/EEL 6562 Project/plane2.tiff", 0)
-sample3 = cv2.imread("/Users/Pratik/Downloads/EEL 6562 Project/airplanes.tiff", 0)
+sample1 = cv2.imread("/plane1.tiff", 0)
+sample2 = cv2.imread("/airplanes.tiff", 0)
 retval, sample1 = cv2.threshold(sample1, 127, 255, cv2.THRESH_BINARY_INV)
 retval, sample2 = cv2.threshold(sample2, 127, 255, cv2.THRESH_BINARY_INV)
-retval, sample3 = cv2.threshold(sample3, 127, 255, cv2.THRESH_BINARY_INV)
 training_set, response = train_set_generater(sample1, sample2)
 """generate training_set"""
 
@@ -140,7 +138,7 @@ fourier_Descriptor1 = findFourierDescriptor(sample1)
 constructContour1 = constructContour(fourier_Descriptor1, Min_Descriptors,1)
 
 # import reconstructed image and preprocess
-sample3 = cv2.imread("/Users/Pratik/Downloads/EEL 6562 Project/reconstruct_result1.tiff", 0)
+sample3 = cv2.imread("/reconstruct_result1.tiff", 0)
 reconstruct(sample3)
 retval, sample3 = cv2.threshold(sample3, 127, 255, cv2.THRESH_BINARY_INV)
 test_set, correct_answer = test_set_generater(sample3)
@@ -165,7 +163,6 @@ precison=(cnMatrix[0][0]*100.0/(cnMatrix[0][0]+cnMatrix[1][0]))
 print '\n'
 print 'K Nearest Neighbour'
 print 'Precison :',precison
-print 'Accuracy :',correct*neighbors_acc/(1000.0*answer_KNN.size)
 print 'Prediction :', prediction_KNN
 print '\n'
 """"K-nearest neighbor classifier"""
@@ -195,7 +192,6 @@ cnMatrix=confusion_matrix(correct_answer,answer_SVM)
 precison=(cnMatrix[0][0]*100.0/(cnMatrix[0][0]+cnMatrix[1][0]))
 print 'SVM '
 print 'Precison :',precison
-print 'Accuracy :',correct*100.0/answer_SVM.size
 print 'Prediction :', prediction_SVM
 print '\n'
 """Support Vector Machine Classifier"""
@@ -218,38 +214,7 @@ cnMatrix=confusion_matrix(correct_answer,answer_bayes)
 precison=(cnMatrix[0][1]*100.0/(cnMatrix[0][1]+cnMatrix[1][1]))
 print 'Normay Bayes '
 print 'Precison :',precison
-print 'Accuracy :',correct/(1000.0)
 print 'Prediction :', prediction_bayes
 print '\n'
 """Normal Bayers classifier"""
-
-
-"""Decison Tree Classifier"""
-# Define parameters for SVM
-dtree_parameters = dict(
-    kernel_type=cv2.SVM_LINEAR,
-    svm_type=cv2.SVM_C_SVC,
-    C=1
-)
-# Train SVM
-dtree_model = cv2.SVM()
-dtree_model.train(training_set, response, params=dtree_parameters)
-# Test SVM
-answer_dtree = [dtree_model.predict(s) for s in test_set]
-answer_dtree = np.array(answer_dtree)
-prediction_dtree = np.sum(
-    np.in1d(
-        correct_answer,
-        answer_dtree)) / Max_Train_Size
-mask = answer_dtree==correct_answer
-correct = np.count_nonzero(mask)
-cnMatrix=confusion_matrix(correct_answer,answer_dtree)
-cnMatrix=confusion_matrix(correct_answer,answer_dtree)
-precison=(cnMatrix[0][0]*100.0/(cnMatrix[0][0]+cnMatrix[1][0]))
-print 'Decison Tree '
-print 'Precison :',precison
-print 'Accuracy :',correct*100.0/answer_dtree.size
-print 'Prediction :', prediction_dtree
-print '\n'
-"""Decison Tree Classifier"""
 
